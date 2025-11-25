@@ -9,44 +9,10 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
+import { Stock } from '@/types';
 import { Head } from '@inertiajs/react';
 
-const movements = [
-    {
-        id: 1,
-        item: 'Bond Paper A4',
-        type: 'Stock In',
-        qty: 200,
-        user: 'Admin',
-        date: '2025-01-10',
-    },
-    {
-        id: 2,
-        item: 'Bond Paper A4',
-        type: 'Stock Out',
-        qty: 50,
-        user: 'Teacher John',
-        date: '2025-01-12',
-    },
-    {
-        id: 3,
-        item: 'Marker Black',
-        type: 'Stock Out',
-        qty: 20,
-        user: 'Teacher Anne',
-        date: '2025-01-15',
-    },
-    {
-        id: 4,
-        item: 'Yellow Pad',
-        type: 'Stock In',
-        qty: 80,
-        user: 'Admin',
-        date: '2025-01-18',
-    },
-];
-
-export default function StockMovement() {
+export default function StockMovement({stocks}: {stocks: Stock[]}) {
     return (
         <AppLayout>
             <Head title="Product Management" />
@@ -65,26 +31,46 @@ export default function StockMovement() {
                     </TableHeader>
 
                     <TableBody>
-                        {movements.map((m) => (
-                            <TableRow key={m.id}>
+                        {stocks.map((stock) => (
+                            <TableRow key={stock.id}>
                                 <TableCell className="font-medium">
-                                    {m.item}
+                                    {stock.product.name}
                                 </TableCell>
 
                                 <TableCell
                                     className={
-                                        m.type === 'Stock In'
-                                            ? 'font-semibold text-green-600'
-                                            : 'font-semibold text-red-600'
+                                        stock.movement_type === 'in'
+                                            ? 'font-semibold text-green-600 capitalize'
+                                            : 'font-semibold text-red-600 capitalize'
                                     }
                                 >
-                                    {m.type}
+                                    Movement {stock.movement_type}
                                 </TableCell>
 
-                                <TableCell>{m.qty}</TableCell>
-                                <TableCell>{m.user}</TableCell>
+                                <TableCell>{stock.quantity}</TableCell>
+
+                                <TableCell>
+                                    {
+                                    stock.user.role === 'admin' && stock.movement_type === 'in'
+                                        ? 'Stock Added by Admin'
+                                    : stock.user.role === 'admin' && stock.movement_type === 'out'
+                                        ? 'Stock Removed by Admin'
+                                    : stock.user.role === 'user' && stock.movement_type === 'out'
+                                        ? 'Stock bought by User'
+                                    : 'Unknown Action'}
+                                </TableCell>
+
                                 <TableCell className="text-right">
-                                    {m.date}
+                                    {new Date(stock.created_at).toLocaleDateString(
+                                        undefined,
+                                        {
+                                            year: 'numeric',
+                                            month: 'short',
+                                            day: 'numeric',
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                        }
+                                    )}
                                 </TableCell>
                             </TableRow>
                         ))}
@@ -94,7 +80,7 @@ export default function StockMovement() {
                         <TableRow>
                             <TableCell colSpan={4}>Total Movements</TableCell>
                             <TableCell className="text-right">
-                                {movements.length}
+                                {stocks.length}
                             </TableCell>
                         </TableRow>
                     </TableFooter>

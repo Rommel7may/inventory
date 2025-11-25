@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Inertia\Inertia;
+use App\Models\Product;
 use App\Models\Inventory;
 use Illuminate\Http\Request;
 
@@ -13,7 +14,8 @@ class InventoryController extends Controller
      */
     public function index()
     {
-        return Inertia::render('inventory-alert');
+        $inventories = Product::all();
+        return Inertia::render('inventory-alert', compact('inventories'));
     }
 
     /**

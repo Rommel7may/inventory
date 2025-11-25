@@ -54,3 +54,17 @@ export interface Product {
     updated_at: string;
     [key: string]: unknown; // This allows for additional properties...
 }
+
+export interface Stock {
+    id: number;
+    product_id: number;
+    quantity: number;
+    movement_type: 'in' | 'out';
+    user_id: number;
+    created_at: string;
+    updated_at: string;
+    [key: string]: unknown; // This allows for additional properties...
+
+    product: Product;
+    user: User;
+}
