@@ -12,4 +12,9 @@ class Product extends Model
         'price',
         'stock',
     ];
+
+    public function stocks()
+    {
+        return $this->hasMany(Stock::class);
+    }
 }

@@ -13,7 +13,8 @@ class StockController extends Controller
      */
     public function index()
     {
-        return Inertia::render('stock-movement');
+        $stocks = Stock::with(['product', 'user'])->get();
+        return Inertia::render('stock-movement', compact('stocks'));
     }
 
     /**

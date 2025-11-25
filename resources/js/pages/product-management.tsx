@@ -1,5 +1,5 @@
 import AppLayout from "@/layouts/app-layout";
-import { Head, useForm } from "@inertiajs/react";
+import { Head, useForm, usePage } from "@inertiajs/react";
 
 import {
   Table,
@@ -21,9 +21,19 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Product } from "@/types";
+import { Product, SharedData } from "@/types";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+  InputGroupText,
+  InputGroupTextarea,
+} from "@/components/ui/input-group"
+import { SearchIcon } from "lucide-react";
 
 export default function ProductManagement({products} : {products:Product[]}) {
+    const { auth } = usePage<SharedData>().props;
     const { data, setData, post, processing, reset } = useForm({
         name: "",
         description: "",
@@ -44,10 +54,21 @@ export default function ProductManagement({products} : {products:Product[]}) {
 
     
     return (
+        
         <AppLayout>
             <Head title="Product Management" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
-                <div className="flex justify-end">
+                <div className="flex justify-between items-center">
+                    <InputGroup className="max-w-lg">
+                    <InputGroupInput placeholder="Search..." />
+                    <InputGroupAddon>
+                        <SearchIcon />
+                    </InputGroupAddon>
+                    <InputGroupAddon align="inline-end">
+                        <InputGroupButton>Search</InputGroupButton>
+                    </InputGroupAddon>
+                    </InputGroup>
+                    {auth.user.role === "admin" &&
                     <Dialog>
                         <DialogTrigger asChild>
                             <Button>Create Product</Button>
@@ -106,6 +127,7 @@ export default function ProductManagement({products} : {products:Product[]}) {
                             </form>
                         </DialogContent>
                     </Dialog>
+                    }
                 </div>
                 <Table>
                     <TableCaption>A list of your recent invoices.</TableCaption>
@@ -123,10 +145,21 @@ export default function ProductManagement({products} : {products:Product[]}) {
                             <TableCell className="font-medium">{product.name}</TableCell>
                             <TableCell>{product.price}</TableCell>
                             <TableCell>{product.stock}</TableCell>
+                            {auth.user.role === "admin" ? (
                             <TableCell className="text-right space-x-2">
+                                
                                 <Button size="sm" variant="destructive">Delete</Button>
                                 <Button size="sm" className="bg-blue-500 hover:bg-blue-600">Edit</Button>
+                                
                             </TableCell>
+                            ) : (
+                                <TableCell className="text-right space-x-2">
+                                
+                                    <Button size="sm" className="bg-blue-500 hover:bg-blue-600">Buy</Button>
+                                
+                                </TableCell>
+                                )
+                            }
                             </TableRow>
                         ))}
                     </TableBody>
