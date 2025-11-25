@@ -10,9 +10,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\InventoryController;
 
 Route::get('/', function () {
-    return Inertia::render('welcome', [
-        'canRegister' => Features::enabled(Features::registration()),
-    ]);
+    return redirect()->route('product-management.index');
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {

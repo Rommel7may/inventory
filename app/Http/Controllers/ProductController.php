@@ -13,7 +13,8 @@ class ProductController extends Controller
      */
     public function index()
     {
-        return Inertia::render('product-management');
+        $products = Product::all();
+        return Inertia::render('product-management', compact('products'));
     }
 
     /**
@@ -29,7 +30,16 @@ class ProductController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'name'        => 'required|string|max:255',
+            'description' => 'nullable|string|max:500',
+            'price'       => 'required|numeric|min:0',
+            'stock'       => 'required|integer|min:0',
+        ]);
+
+        Product::create($validated);
+
+        return back()->with('success', 'Product created successfully.');
     }
 
     /**
@@ -53,7 +63,19 @@ class ProductController extends Controller
      */
     public function update(Request $request, Product $product)
     {
-        //
+        // Validate input
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string|max:1000',
+            'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
+        ]);
+
+        // Update product
+        $product->update($validated);
+
+        // Return to previous page with success message
+        return redirect()->back()->with('success', 'Product updated successfully.');
     }
 
     /**
